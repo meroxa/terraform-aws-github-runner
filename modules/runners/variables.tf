@@ -57,6 +57,12 @@ variable "market_options" {
   default     = "spot"
 }
 
+variable "runner_os" {
+  description = "The EC2 OS type to use for action runner instances."
+  type        = string
+  default     = "linux"
+}
+
 variable "instance_type" {
   description = "Default instance type for the action runner."
   type        = string
@@ -66,10 +72,7 @@ variable "instance_type" {
 variable "ami_filter" {
   description = "List of maps used to create the AMI filter for the action runner AMI."
   type        = map(list(string))
-
-  default = {
-    name = ["amzn2-ami-hvm-2.*-x86_64-ebs"]
-  }
+  default     = null
 }
 
 variable "ami_owners" {
