@@ -21,10 +21,10 @@ locals {
 
   ami_filter = (
     var.ami_filter != null
-      ? var.ami_filter
-      : var.runner_os == "linux" 
-        ? { name = ["amzn2-ami-hvm-2.*-x86_64-ebs"] } 
-        : { name = ["Windows_Server-2019-English-Core-Base-*"] }
+    ? var.ami_filter
+    : var.runner_os == "linux"
+    ? { name = ["amzn2-ami-hvm-2.*-x86_64-ebs"] }
+    : { name = ["Windows_Server-2019-English-Core-Base-*"] }
   )
 }
 
