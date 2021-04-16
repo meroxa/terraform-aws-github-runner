@@ -348,7 +348,7 @@ variable "market_options" {
 }
 
 variable "runner_os" {
-  description = "The OS to use for GitHub Actions Runners (linux,win)"
+  description = "The Operating System to use for GitHub Actions Runners (linux,win)"
   type        = string
   default     = "linux"
 }
