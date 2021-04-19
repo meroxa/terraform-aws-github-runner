@@ -274,6 +274,7 @@ variable "runner_log_files" {
     file_path        = string
     log_stream_name  = string
   }))
+  default = null
 }
 
 variable "ghes_url" {
