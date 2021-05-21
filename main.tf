@@ -6,7 +6,15 @@ locals {
   s3_action_runner_url = "s3://${module.runner_binaries.bucket.id}/${module.runner_binaries.runner_distribution_object_key}"
   runner_architecture  = substr(var.instance_type, 0, 2) == "a1" || substr(var.instance_type, 1, 2) == "6g" ? "arm64" : "x64"
 
-  ami_filter = length(var.ami_filter) > 0 ? var.ami_filter : local.runner_architecture == "arm64" ? { name = ["amzn2-ami-hvm-2*-arm64-gp2"] } : { name = ["amzn2-ami-hvm-2.*-x86_64-ebs"] }
+  ami_filter = (
+    length(var.ami_filter) > 0
+    ? var.ami_filter
+    : local.runner_architecture == "arm64"
+    ? { name = ["amzn2-ami-hvm-2*-arm64-gp2"] }
+    : var.runner_os == "win"
+    ? { name = ["Windows_Server-20H2-English-Core-ContainersLatest-*"] }
+    : { name = ["amzn2-ami-hvm-2.*-x86_64-ebs"] }
+  )
 }
 
 resource "random_string" "random" {
@@ -67,6 +75,7 @@ module "runners" {
   s3_bucket_runner_binaries   = module.runner_binaries.bucket
   s3_location_runner_binaries = local.s3_action_runner_url
 
+  runner_os             = var.runner_os
   instance_type         = var.instance_type
   market_options        = var.market_options
   block_device_mappings = var.block_device_mappings
@@ -126,6 +135,7 @@ module "runner_binaries" {
 
   distribution_bucket_name = "${var.environment}-dist-${random_string.random.result}"
 
+  runner_os                        = var.runner_os
   runner_architecture              = local.runner_architecture
   runner_allow_prerelease_binaries = var.runner_allow_prerelease_binaries
 

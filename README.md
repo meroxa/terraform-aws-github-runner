@@ -244,6 +244,8 @@ idle_config = [{
 }]
 ```
 
+_**Note**_: When using Windows runners it's recommended to keep a few runners warmed up due to the minutes-long cold start time.
+
 #### Supported config <!-- omit in toc -->
 
 Cron expressions are parsed by [cron-parser](https://github.com/harrisiirak/cron-parser#readme). The supported syntax.
@@ -268,6 +270,8 @@ Examples are located in the [examples](./examples) directory. The following exam
 
 - _[Default](examples/default/README.md)_: The default example of the module
 - _[Permissions boundary](examples/permissions-boundary/README.md)_: Example usages of permissions boundaries.
+- _[Ubuntu](examples/ubuntu/README.md)_: Example usage of creating a runner using Ubuntu AMIs.
+- _[Ubuntu](examples/windows/README.md)_: Example usage of creating a runner using Windows as the OS.
 
 ## Sub modules
 
@@ -346,7 +350,7 @@ No requirements.
 | logging\_retention\_in\_days | Specifies the number of days you want to retain log events for the lambda log group. Possible values are: 0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, and 3653. | `number` | `180` | no |
 | manage\_kms\_key | Let the module manage the KMS key. | `bool` | `true` | no |
 | market\_options | Market options for the action runner instances. Setting the value to `null` let the scaler create on-demand instances instead of spot instances. | `string` | `"spot"` | no |
-| minimum\_running\_time\_in\_minutes | The time an ec2 action runner should be running at minimum before terminated if non busy. | `number` | `5` | no |
+| minimum\_running\_time\_in\_minutes | The time an ec2 action runner should be running at minimum before terminated if non busy. Defaults to 5m for linux runners and 15m for windows runners | `number` | `null` | no |
 | role\_path | The path that will be added to role path for created roles, if not set the environment name will be used. | `string` | `null` | no |
 | role\_permissions\_boundary | Permissions boundary that will be added to the created roles. | `string` | `null` | no |
 | runner\_additional\_security\_group\_ids | (optional) List of additional security groups IDs to apply to the runner | `list(string)` | `[]` | no |
@@ -357,7 +361,8 @@ No requirements.
 | runner\_extra\_labels | Extra labels for the runners (GitHub). Separate each label by a comma | `string` | `""` | no |
 | runner\_group\_name | Name of the runner group. | `string` | `"Default"` | no |
 | runner\_iam\_role\_managed\_policy\_arns | Attach AWS or customer-managed IAM policies (by ARN) to the runner IAM role | `list(string)` | `[]` | no |
-| runner\_log\_files | (optional) Replaces the module default cloudwatch log config. See https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html for details. | <pre>list(object({<br>    log_group_name   = string<br>    prefix_log_group = bool<br>    file_path        = string<br>    log_stream_name  = string<br>  }))</pre> | <pre>[<br>  {<br>    "file_path": "/var/log/messages",<br>    "log_group_name": "messages",<br>    "log_stream_name": "{instance_id}",<br>    "prefix_log_group": true<br>  },<br>  {<br>    "file_path": "/var/log/user-data.log",<br>    "log_group_name": "user_data",<br>    "log_stream_name": "{instance_id}",<br>    "prefix_log_group": true<br>  },<br>  {<br>    "file_path": "/home/ec2-user/actions-runner/_diag/Runner_**.log",<br>    "log_group_name": "runner",<br>    "log_stream_name": "{instance_id}",<br>    "prefix_log_group": true<br>  }<br>]</pre> | no |
+| runner\_log\_files | (optional) Replaces the module default cloudwatch log config. See https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html for details. | <pre>list(object({<br>    log_group_name   = string<br>    prefix_log_group = bool<br>    file_path        = string<br>    log_stream_name  = string<br>  }))</pre> | `null` | no |
+| runner\_os | The Operating System to use for GitHub Actions Runners (linux,win) | `string` | `"linux"` | no |
 | runners\_lambda\_s3\_key | S3 key for runners lambda function. Required if using S3 bucket to specify lambdas. | `any` | `null` | no |
 | runners\_lambda\_s3\_object\_version | S3 object version for runners lambda function. Useful if S3 versioning is enabled on source bucket. | `any` | `null` | no |
 | runners\_lambda\_zip | File location of the lambda zip file for scaling runners. | `string` | `null` | no |

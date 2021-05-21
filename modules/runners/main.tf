@@ -14,16 +14,53 @@ locals {
   role_path                      = var.role_path == null ? "/${var.environment}/" : var.role_path
   instance_profile_path          = var.instance_profile_path == null ? "/${var.environment}/" : var.instance_profile_path
   lambda_zip                     = var.lambda_zip == null ? "${path.module}/lambdas/runners/runners.zip" : var.lambda_zip
-  userdata_template              = var.userdata_template == null ? "${path.module}/templates/user-data.sh" : var.userdata_template
+  default_userdata_template      = var.runner_os == "linux" ? "${path.module}/templates/user-data.sh" : "${path.module}/templates/user-data.ps1"
+  userdata_template              = var.userdata_template == null ? local.default_userdata_template : var.userdata_template
   userdata_arm_patch             = "${path.module}/templates/arm-runner-patch.tpl"
-  userdata_install_config_runner = "${path.module}/templates/install-config-runner.sh"
+  userdata_install_config_runner = var.runner_os == "win" ? "${path.module}/templates/install-config-runner.ps1" : "${path.module}/templates/install-config-runner.sh"
+
+  # see also: ../../main.tf
+  ami_filter = (
+    length(var.ami_filter) > 0
+    ? var.ami_filter
+    : var.runner_architecture == "arm64"
+    ? { name = ["amzn2-ami-hvm-2*-arm64-gp2"] }
+    : var.runner_os == "win"
+    ? { name = ["Windows_Server-20H2-English-Core-ContainersLatest-*"] }
+    : { name = ["amzn2-ami-hvm-2.*-x86_64-ebs"] }
+  )
+
+  runner_log_files = (
+    var.runner_log_files != null
+    ? var.runner_log_files
+    : [
+      {
+        "log_group_name" : "messages",
+        "prefix_log_group" : true,
+        "file_path" : "/var/log/messages",
+        "log_stream_name" : "{instance_id}"
+      },
+      {
+        "log_group_name" : "user_data",
+        "prefix_log_group" : true,
+        "file_path" : var.runner_os == "win" ? "C:/UserData.log" : "/var/log/user-data.log",
+        "log_stream_name" : "{instance_id}"
+      },
+      {
+        "log_group_name" : "runner",
+        "prefix_log_group" : true,
+        "file_path" : var.runner_os == "win" ? "C:/actions-runner/_diag/Runner_*.log" : "/home/runners/actions-runner/_diag/Runner_**.log",
+        "log_stream_name" : "{instance_id}"
+      }
+    ]
+  )
 }
 
 data "aws_ami" "runner" {
   most_recent = "true"
 
   dynamic "filter" {
-    for_each = var.ami_filter
+    for_each = local.ami_filter
     content {
       name   = filter.key
       values = filter.value

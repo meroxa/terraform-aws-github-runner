@@ -46,9 +46,9 @@ variable "scale_down_schedule_expression" {
 }
 
 variable "minimum_running_time_in_minutes" {
-  description = "The time an ec2 action runner should be running at minimum before terminated if non busy."
+  description = "The time an ec2 action runner should be running at minimum before terminated if non busy. Defaults to 5m for linux runners and 15m for windows runners"
   type        = number
-  default     = 5
+  default     = null
 }
 
 variable "runner_extra_labels" {
@@ -289,26 +289,7 @@ variable "runner_log_files" {
     file_path        = string
     log_stream_name  = string
   }))
-  default = [
-    {
-      "log_group_name" : "messages",
-      "prefix_log_group" : true,
-      "file_path" : "/var/log/messages",
-      "log_stream_name" : "{instance_id}"
-    },
-    {
-      "log_group_name" : "user_data",
-      "prefix_log_group" : true,
-      "file_path" : "/var/log/user-data.log",
-      "log_stream_name" : "{instance_id}"
-    },
-    {
-      "log_group_name" : "runner",
-      "prefix_log_group" : true,
-      "file_path" : "/home/ec2-user/actions-runner/_diag/Runner_**.log",
-      "log_stream_name" : "{instance_id}"
-    }
-  ]
+  default = null
 }
 
 variable "ghes_url" {
@@ -345,4 +326,10 @@ variable "market_options" {
   description = "Market options for the action runner instances. Setting the value to `null` let the scaler create on-demand instances instead of spot instances."
   type        = string
   default     = "spot"
+}
+
+variable "runner_os" {
+  description = "The Operating System to use for GitHub Actions Runners (linux,win)"
+  type        = string
+  default     = "linux"
 }
