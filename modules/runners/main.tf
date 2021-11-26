@@ -112,6 +112,7 @@ resource "aws_launch_template" "runner" {
     pre_install                     = var.userdata_pre_install
     post_install                    = var.userdata_post_install
     enable_cloudwatch_agent         = var.enable_cloudwatch_agent
+    enable_meroxa_platform          = var.enable_meroxa_platform
     ssm_key_cloudwatch_agent_config = var.enable_cloudwatch_agent ? aws_ssm_parameter.cloudwatch_agent_config_runner[0].name : ""
     ghes_url                        = var.ghes_url
     ghes_ssl_verify                 = var.ghes_ssl_verify
