@@ -12,9 +12,10 @@ amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c ssm:${ssm_key_cloudwatc
 %{ endif ~}
 
 %{ if enable_meroxa_platform ~}
-# install Go
-wget -c https://golang.org/dl/go1.17.2.linux-amd64.tar.gz
-tar -C /usr/local -xvzf go1.17.2.linux-amd64.tar.gz
+## install Go
+#wget -c https://golang.org/dl/go1.17.2.linux-amd64.tar.gz
+#tar -C /usr/local -xvzf go1.17.2.linux-amd64.tar.gz
+yum groupinstall "Development Tools"
 
 # install Docker
 amazon-linux-extras install docker
@@ -38,12 +39,12 @@ yum -y install terraform
 # install Candy (This is needed for Logan to function end-to-end)
 go install github.com/owenthereal/candy/cmd/candy@latest
 mkdir -p /usr/lib/systemd/resolved.conf.d
-cat<<EOF | sudo tee /usr/lib/systemd/resolved.conf.d/01-candy.conf > /dev/null
+cat<<EOF | tee /usr/lib/systemd/resolved.conf.d/01-candy.conf > /dev/null
 [Resolve]
 DNS=127.0.0.1:25353
 Domains=test
 EOF
-sudo systemctl restart systemd-resolved # Restart systemd-resolved
+systemctl restart systemd-resolved # Restart systemd-resolved
 
 # start 2 clusters
 %{ endif ~}
@@ -52,8 +53,6 @@ sudo systemctl restart systemd-resolved # Restart systemd-resolved
 #amazon-linux-extras install docker
 #service docker start
 #usermod -a -G docker ec2-user
-
-
 
 USER_NAME=ec2-user
 ${install_config_runner}
