@@ -99,6 +99,7 @@ module "runners" {
   runner_extra_labels                  = var.runner_extra_labels
   runner_as_root                       = var.runner_as_root
   runners_maximum_count                = var.runners_maximum_count
+  runners_minimum_count                = var.runners_minimum_count
   idle_config                          = var.idle_config
   enable_ssm_on_runners                = var.enable_ssm_on_runners
   egress_rules                         = var.runner_egress_rules
