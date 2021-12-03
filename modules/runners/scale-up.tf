@@ -21,6 +21,7 @@ resource "aws_lambda_function" "scale_up" {
       RUNNER_EXTRA_LABELS                  = var.runner_extra_labels
       RUNNER_GROUP_NAME                    = var.runner_group_name
       RUNNERS_MAXIMUM_COUNT                = var.runners_maximum_count
+      RUNNERS_MINIMUM_COUNT                = var.runners_minimum_count
       LAUNCH_TEMPLATE_NAME                 = join(",", [for template in aws_launch_template.runner : template.name])
       SUBNET_IDS                           = join(",", var.subnet_ids)
       PARAMETER_GITHUB_APP_ID_NAME         = var.github_app_parameters.id.name

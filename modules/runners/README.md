@@ -149,6 +149,7 @@ No modules.
 | <a name="input_runners_lambda_s3_key"></a> [runners\_lambda\_s3\_key](#input\_runners\_lambda\_s3\_key) | S3 key for runners lambda function. Required if using S3 bucket to specify lambdas. | `any` | `null` | no |
 | <a name="input_runners_lambda_s3_object_version"></a> [runners\_lambda\_s3\_object\_version](#input\_runners\_lambda\_s3\_object\_version) | S3 object version for runners lambda function. Useful if S3 versioning is enabled on source bucket. | `any` | `null` | no |
 | <a name="input_runners_maximum_count"></a> [runners\_maximum\_count](#input\_runners\_maximum\_count) | The maximum number of runners that will be created. | `number` | `3` | no |
+| <a name="input_runners_minimum_count"></a> [runners\_minimum\_count](#input\_runners\_minimum\_count) | The minimum number of runners that will be created. | `number` | `1` | no |
 | <a name="input_s3_bucket_runner_binaries"></a> [s3\_bucket\_runner\_binaries](#input\_s3\_bucket\_runner\_binaries) | n/a | <pre>object({<br>    arn = string<br>  })</pre> | n/a | yes |
 | <a name="input_s3_location_runner_binaries"></a> [s3\_location\_runner\_binaries](#input\_s3\_location\_runner\_binaries) | S3 location of runner distribution. | `string` | n/a | yes |
 | <a name="input_scale_down_schedule_expression"></a> [scale\_down\_schedule\_expression](#input\_scale\_down\_schedule\_expression) | Scheduler expression to check every x for scale down. | `string` | `"cron(*/5 * * * ? *)"` | no |

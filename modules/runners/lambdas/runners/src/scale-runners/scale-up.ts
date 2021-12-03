@@ -15,6 +15,7 @@ export const scaleUp = async (eventSource: string, payload: ActionRequestMessage
   if (eventSource !== 'aws:sqs') throw Error('Cannot handle non-SQS events!');
   const enableOrgLevel = yn(process.env.ENABLE_ORGANIZATION_RUNNERS, { default: true });
   const maximumRunners = parseInt(process.env.RUNNERS_MAXIMUM_COUNT || '3');
+  const minimumRunners = parseInt(process.env.RUNNERS_MINIMUM_COUNT || '1');
   const runnerExtraLabels = process.env.RUNNER_EXTRA_LABELS;
   const runnerGroup = process.env.RUNNER_GROUP_NAME;
   const environment = process.env.ENVIRONMENT;
@@ -58,9 +59,9 @@ export const scaleUp = async (eventSource: string, payload: ActionRequestMessage
       runnerOwner,
     });
     console.info(`${runnerType} ${runnerOwner} has ${currentRunners.length}/${maximumRunners} runners`);
+    console.info(`Minimum Runner count is ${minimumRunners}`);
 
     if (currentRunners.length < maximumRunners) {
-      console.info(`Attempting to launch a new runner`);
       // create token
       const registrationToken = enableOrgLevel
         ? await githubInstallationClient.actions.createRegistrationTokenForOrg({ org: payload.repositoryOwner })
@@ -73,16 +74,20 @@ export const scaleUp = async (eventSource: string, payload: ActionRequestMessage
       const labelsArgument = runnerExtraLabels !== undefined ? `--labels ${runnerExtraLabels}` : '';
       const runnerGroupArgument = runnerGroup !== undefined ? ` --runnergroup ${runnerGroup}` : '';
       const configBaseUrl = ghesBaseUrl ? ghesBaseUrl : 'https://github.com';
+      for (let i = currentRunners.length; i < minimumRunners; i++) {
+        console.info(`Attempting to launch a new runner`);
+        await createRunnerLoop({
+          environment,
+          runnerServiceConfig: enableOrgLevel
+              // eslint-disable-next-line max-len
+              ? `--url ${configBaseUrl}/${payload.repositoryOwner} --token ${token} ${labelsArgument}${runnerGroupArgument}`
+              : `--url ${configBaseUrl}/${payload.repositoryOwner}/${payload.repositoryName} ` +
+              `--token ${token} ${labelsArgument}`,
+          runnerOwner,
+          runnerType,
+        });
+      }
 
-      await createRunnerLoop({
-        environment,
-        runnerServiceConfig: enableOrgLevel
-          ? `--url ${configBaseUrl}/${payload.repositoryOwner} --token ${token} ${labelsArgument}${runnerGroupArgument}`
-          : `--url ${configBaseUrl}/${payload.repositoryOwner}/${payload.repositoryName} ` +
-            `--token ${token} ${labelsArgument}`,
-        runnerOwner,
-        runnerType,
-      });
     } else {
       console.warn('No runner created: maximum number of runners reached.');
     }

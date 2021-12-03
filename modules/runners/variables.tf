@@ -199,6 +199,12 @@ variable "runners_maximum_count" {
   default     = 3
 }
 
+variable "runners_minimum_count" {
+  description = "The minimum number of runners that will be created."
+  type        = number
+  default     = 1
+}
+
 variable "runner_architecture" {
   description = "The platform architecture of the runner instance_type."
   type        = string
