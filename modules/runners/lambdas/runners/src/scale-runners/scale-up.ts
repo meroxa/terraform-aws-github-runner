@@ -2,6 +2,9 @@ import { listEC2Runners, createRunner, RunnerInputParameters } from './runners';
 import { createOctoClient, createGithubAppAuth, createGithubInstallationAuth } from './gh-auth';
 import yn from 'yn';
 import { Octokit } from '@octokit/rest';
+import { logger as rootLogger, LogFields } from './logger';
+
+const logger = rootLogger.getChildLogger({ name: 'scale-up' });
 
 export interface ActionRequestMessage {
   id: number;
@@ -11,7 +14,7 @@ export interface ActionRequestMessage {
   installationId: number;
 }
 
-export const scaleUp = async (eventSource: string, payload: ActionRequestMessage): Promise<void> => {
+export async function scaleUp(eventSource: string, payload: ActionRequestMessage): Promise<void> {
   if (eventSource !== 'aws:sqs') throw Error('Cannot handle non-SQS events!');
   const enableOrgLevel = yn(process.env.ENABLE_ORGANIZATION_RUNNERS, { default: true });
   const maximumRunners = parseInt(process.env.RUNNERS_MAXIMUM_COUNT || '3');
@@ -21,7 +24,16 @@ export const scaleUp = async (eventSource: string, payload: ActionRequestMessage
   const environment = process.env.ENVIRONMENT;
   const ghesBaseUrl = process.env.GHES_URL;
 
-  console.info(`Received ${payload.eventType} from ${payload.repositoryOwner}/${payload.repositoryName}`);
+  const runnerType = enableOrgLevel ? 'Org' : 'Repo';
+  const runnerOwner = enableOrgLevel ? payload.repositoryOwner : `${payload.repositoryOwner}/${payload.repositoryName}`;
+
+  LogFields.fields = {};
+  LogFields.fields.runnerType = runnerType;
+  LogFields.fields.runnerOwner = runnerOwner;
+  LogFields.fields.event = payload.eventType;
+  LogFields.fields.id = payload.id.toString();
+
+  logger.info(`Received event`, LogFields.print());
 
   let ghesApiUrl = '';
   if (ghesBaseUrl) {
@@ -48,8 +60,6 @@ export const scaleUp = async (eventSource: string, payload: ActionRequestMessage
 
   const ghAuth = await createGithubInstallationAuth(installationId, ghesApiUrl);
   const githubInstallationClient = await createOctoClient(ghAuth.token, ghesApiUrl);
-  const runnerType = enableOrgLevel ? 'Org' : 'Repo';
-  const runnerOwner = enableOrgLevel ? payload.repositoryOwner : `${payload.repositoryOwner}/${payload.repositoryName}`;
 
   const isQueued = await getJobStatus(githubInstallationClient, payload);
   if (isQueued) {
@@ -58,9 +68,8 @@ export const scaleUp = async (eventSource: string, payload: ActionRequestMessage
       runnerType,
       runnerOwner,
     });
-    console.info(`${runnerType} ${runnerOwner} has ${currentRunners.length}/${maximumRunners} runners`);
+    logger.info(`Current runners: ${currentRunners.length} of ${maximumRunners}`, LogFields.print());
     console.info(`Minimum Runner count is ${minimumRunners}`);
-
     if (currentRunners.length < maximumRunners) {
       // create token
       const registrationToken = enableOrgLevel
@@ -75,7 +84,7 @@ export const scaleUp = async (eventSource: string, payload: ActionRequestMessage
       const runnerGroupArgument = runnerGroup !== undefined ? ` --runnergroup ${runnerGroup}` : '';
       const configBaseUrl = ghesBaseUrl ? ghesBaseUrl : 'https://github.com';
       for (let i = currentRunners.length; i < minimumRunners; i++) {
-        console.info(`Attempting to launch a new runner`);
+        logger.info(`Attempting to launch a new runner`, LogFields.print());
         await createRunnerLoop({
           environment,
           runnerServiceConfig: enableOrgLevel
@@ -89,10 +98,10 @@ export const scaleUp = async (eventSource: string, payload: ActionRequestMessage
       }
 
     } else {
-      console.warn('No runner created: maximum number of runners reached.');
+      logger.info('No runner will be created, maximum number of runners reached.', LogFields.print());
     }
   }
-};
+}
 
 async function getJobStatus(githubInstallationClient: Octokit, payload: ActionRequestMessage): Promise<boolean> {
   let isQueued = false;
@@ -113,7 +122,9 @@ async function getJobStatus(githubInstallationClient: Octokit, payload: ActionRe
   } else {
     throw Error(`Event ${payload.eventType} is not supported`);
   }
-  console.info(`Job ${payload.id} is ${isQueued ? 'queued' : 'not queued'}`);
+  if (!isQueued) {
+    logger.info(`Job not queued`, LogFields.print());
+  }
   return isQueued;
 }
 
@@ -121,14 +132,14 @@ export async function createRunnerLoop(runnerParameters: RunnerInputParameters):
   const launchTemplateNames = process.env.LAUNCH_TEMPLATE_NAME?.split(',') as string[];
   let launched = false;
   for (let i = 0; i < launchTemplateNames.length; i++) {
-    console.info(`Attempt '${i}' to launch instance using ${launchTemplateNames[i]}.`);
+    logger.info(`Attempt '${i}' to launch instance using ${launchTemplateNames[i]}.`, LogFields.print());
     try {
       await createRunner(runnerParameters, launchTemplateNames[i]);
       launched = true;
       break;
     } catch (error) {
-      console.warn(`Attempt '${i}' to launch instance using ${launchTemplateNames[i]} FAILED.`);
-      console.error(error);
+      logger.debug(`Attempt '${i}' to launch instance using ${launchTemplateNames[i]} FAILED.`, LogFields.print());
+      logger.error(error, LogFields.print());
     }
   }
   if (launched == false) {

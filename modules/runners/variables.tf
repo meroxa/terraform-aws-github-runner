@@ -84,6 +84,12 @@ variable "ami_owners" {
   default     = ["amazon"]
 }
 
+variable "enabled_userdata" {
+  description = "Should the userdata script be enabled for the runner. Set this to false if you are using your own prebuilt AMI"
+  type        = bool
+  default     = true
+}
+
 variable "userdata_template" {
   description = "Alternative user-data template, replacing the default template. By providing your own user_data you have to take care of installing all required software, including the action runner. Variables userdata_pre/post_install are ignored."
   type        = string
@@ -161,6 +167,12 @@ variable "lambda_timeout_scale_down" {
   description = "Time out for the scale down lambda in seconds."
   type        = number
   default     = 60
+}
+
+variable "scale_up_reserved_concurrent_executions" {
+  description = "Amount of reserved concurrent executions for the scale-up lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations."
+  type        = number
+  default     = 1
 }
 
 variable "lambda_timeout_scale_up" {
@@ -303,7 +315,13 @@ variable "runner_log_files" {
       "prefix_log_group" : true,
       "file_path" : "/home/ec2-user/actions-runner/_diag/Runner_**.log",
       "log_stream_name" : "{instance_id}"
-    }
+    },
+    {
+      "log_group_name" : "runner-startup",
+      "prefix_log_group" : true,
+      "file_path" : "/var/log/runner-startup.log",
+      "log_stream_name" : "{instance_id}"
+    },
   ]
 }
 
@@ -379,4 +397,53 @@ variable "egress_rules" {
     to_port          = 0
     description      = null
   }]
+}
+
+variable "log_type" {
+  description = "Logging format for lambda logging. Valid values are 'json', 'pretty', 'hidden'. "
+  type        = string
+  default     = "pretty"
+  validation {
+    condition = anytrue([
+      var.log_type == "json",
+      var.log_type == "pretty",
+      var.log_type == "hidden",
+    ])
+    error_message = "`log_type` value not valid. Valid values are 'json', 'pretty', 'hidden'."
+  }
+}
+
+variable "log_level" {
+  description = "Logging level for lambda logging. Valid values are  'silly', 'trace', 'debug', 'info', 'warn', 'error', 'fatal'."
+  type        = string
+  default     = "info"
+  validation {
+    condition = anytrue([
+      var.log_level == "silly",
+      var.log_level == "trace",
+      var.log_level == "debug",
+      var.log_level == "info",
+      var.log_level == "warn",
+      var.log_level == "error",
+      var.log_level == "fatal",
+    ])
+    error_message = "`log_level` value not valid. Valid values are 'silly', 'trace', 'debug', 'info', 'warn', 'error', 'fatal'."
+  }
+}
+
+variable "runner_ec2_tags" {
+  description = "Map of tags that will be added to the launch template instance tag specificatons."
+  type        = map(string)
+  default     = {}
+}
+
+variable "metadata_options" {
+  description = "Metadata options for the ec2 runner instances."
+  type        = map(any)
+  default = {
+    http_endpoint               = "enabled"
+    http_tokens                 = "optional"
+    http_put_response_hop_limit = 1
+  }
+
 }
