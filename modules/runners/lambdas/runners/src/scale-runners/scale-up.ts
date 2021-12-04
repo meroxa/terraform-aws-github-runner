@@ -69,7 +69,7 @@ export async function scaleUp(eventSource: string, payload: ActionRequestMessage
       runnerOwner,
     });
     logger.info(`Current runners: ${currentRunners.length} of ${maximumRunners}`, LogFields.print());
-    console.info(`Minimum Runner count is ${minimumRunners}`);
+    logger.info(`Minimum Runner count is ${minimumRunners}`);
     if (currentRunners.length < maximumRunners) {
       // create token
       const registrationToken = enableOrgLevel
