@@ -50,7 +50,7 @@ echo "Delete GH Runner token from AWS SSM"
 aws ssm delete-parameter --name "$environment"-"$instance_id" --region "$region"
 
 if [ -z "$run_as" ]; then
-    run_as="runners"
+    run_as="runner"
 fi
 
 echo "Configure GH Runner as user $run_as"

@@ -15,7 +15,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \
     unzip
 
-USER_NAME=runners
+USER_NAME=runner
 useradd -m -s /bin/bash $USER_NAME
 USER_ID=$(id -ru $USER_NAME)
 

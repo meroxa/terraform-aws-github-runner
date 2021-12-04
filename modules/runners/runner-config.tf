@@ -1,7 +1,7 @@
 resource "aws_ssm_parameter" "runner_config_run_as" {
   name  = "/${var.environment}/runner/run-as"
   type  = "String"
-  value = var.runner_as_root ? "root" : "runners"
+  value = var.runner_as_root ? "root" : "runner"
   tags  = local.tags
 }
 
