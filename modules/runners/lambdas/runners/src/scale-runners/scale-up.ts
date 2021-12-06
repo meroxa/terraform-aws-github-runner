@@ -83,17 +83,19 @@ export async function scaleUp(eventSource: string, payload: ActionRequestMessage
       const runnerGroupArgument = runnerGroup !== undefined ? ` --runnergroup ${runnerGroup}` : '';
       const configBaseUrl = ghesBaseUrl ? ghesBaseUrl : 'https://github.com';
       logger.info(`Attempting to launch a new runner`, LogFields.print());
-      await createRunnerLoop({
-        environment,
-        runnerServiceConfig: enableOrgLevel
-            // eslint-disable-next-line max-len
-            ? `--url ${configBaseUrl}/${payload.repositoryOwner} --token ${token} ${labelsArgument}${runnerGroupArgument}`
+      await createRunnerLoop(
+        {
+          environment,
+          runnerServiceConfig: enableOrgLevel
+            ? // eslint-disable-next-line max-len
+              `--url ${configBaseUrl}/${payload.repositoryOwner} --token ${token} ${labelsArgument}${runnerGroupArgument}`
             : `--url ${configBaseUrl}/${payload.repositoryOwner}/${payload.repositoryName} ` +
-            `--token ${token} ${labelsArgument}`,
-        runnerOwner,
-        runnerType,
-      }, currentRunners.length);
-
+              `--token ${token} ${labelsArgument}`,
+          runnerOwner,
+          runnerType,
+        },
+        currentRunners.length,
+      );
     } else {
       logger.info('No runner will be created, maximum number of runners reached.', LogFields.print());
     }

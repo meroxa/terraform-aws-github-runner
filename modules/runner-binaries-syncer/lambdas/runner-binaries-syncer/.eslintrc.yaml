@@ -5,12 +5,12 @@ extends:
   #- google
   - eslint:recommended
   - plugin:@typescript-eslint/recommended
-parser: "@typescript-eslint/parser"
+parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaVersion: 12
   sourceType: module
 plugins:
-  - "@typescript-eslint"
+  - '@typescript-eslint'
 rules:
   semi: error
   max-len:
@@ -19,5 +19,5 @@ rules:
 
 overrides:
   - files:
-      - "*.ts"
-      - "*.tsx"
+      - '*.ts'
+      - '*.tsx'
