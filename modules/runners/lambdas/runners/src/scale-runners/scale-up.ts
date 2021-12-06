@@ -18,6 +18,7 @@ export async function scaleUp(eventSource: string, payload: ActionRequestMessage
   if (eventSource !== 'aws:sqs') throw Error('Cannot handle non-SQS events!');
   const enableOrgLevel = yn(process.env.ENABLE_ORGANIZATION_RUNNERS, { default: true });
   const maximumRunners = parseInt(process.env.RUNNERS_MAXIMUM_COUNT || '3');
+  const minimumRunners = parseInt(process.env.RUNNERS_MINIMUM_COUNT || '1');
   const runnerExtraLabels = process.env.RUNNER_EXTRA_LABELS;
   const runnerGroup = process.env.RUNNER_GROUP_NAME;
   const environment = process.env.ENVIRONMENT;
@@ -68,9 +69,7 @@ export async function scaleUp(eventSource: string, payload: ActionRequestMessage
       runnerOwner,
     });
     logger.info(`Current runners: ${currentRunners.length} of ${maximumRunners}`, LogFields.print());
-
     if (currentRunners.length < maximumRunners) {
-      logger.info(`Attempting to launch a new runner`, LogFields.print());
       // create token
       const registrationToken = enableOrgLevel
         ? await githubInstallationClient.actions.createRegistrationTokenForOrg({ org: payload.repositoryOwner })
@@ -83,16 +82,20 @@ export async function scaleUp(eventSource: string, payload: ActionRequestMessage
       const labelsArgument = runnerExtraLabels !== undefined ? `--labels ${runnerExtraLabels}` : '';
       const runnerGroupArgument = runnerGroup !== undefined ? ` --runnergroup ${runnerGroup}` : '';
       const configBaseUrl = ghesBaseUrl ? ghesBaseUrl : 'https://github.com';
-
-      await createRunnerLoop({
-        environment,
-        runnerServiceConfig: enableOrgLevel
-          ? `--url ${configBaseUrl}/${payload.repositoryOwner} --token ${token} ${labelsArgument}${runnerGroupArgument}`
-          : `--url ${configBaseUrl}/${payload.repositoryOwner}/${payload.repositoryName} ` +
-            `--token ${token} ${labelsArgument}`,
-        runnerOwner,
-        runnerType,
-      });
+      logger.info(`Attempting to launch a new runner`, LogFields.print());
+      await createRunnerLoop(
+        {
+          environment,
+          runnerServiceConfig: enableOrgLevel
+            ? // eslint-disable-next-line max-len
+              `--url ${configBaseUrl}/${payload.repositoryOwner} --token ${token} ${labelsArgument}${runnerGroupArgument}`
+            : `--url ${configBaseUrl}/${payload.repositoryOwner}/${payload.repositoryName} ` +
+              `--token ${token} ${labelsArgument}`,
+          runnerOwner,
+          runnerType,
+        },
+        currentRunners.length,
+      );
     } else {
       logger.info('No runner will be created, maximum number of runners reached.', LogFields.print());
     }
@@ -124,18 +127,22 @@ async function getJobStatus(githubInstallationClient: Octokit, payload: ActionRe
   return isQueued;
 }
 
-export async function createRunnerLoop(runnerParameters: RunnerInputParameters): Promise<void> {
+export async function createRunnerLoop(runnerParameters: RunnerInputParameters, currentRunners: number): Promise<void> {
   const launchTemplateNames = process.env.LAUNCH_TEMPLATE_NAME?.split(',') as string[];
+  const minimumRunners = parseInt(process.env.RUNNERS_MINIMUM_COUNT || '1');
+  logger.info(`Minimum Runner count is ${minimumRunners}`);
   let launched = false;
   for (let i = 0; i < launchTemplateNames.length; i++) {
     logger.info(`Attempt '${i}' to launch instance using ${launchTemplateNames[i]}.`, LogFields.print());
-    try {
-      await createRunner(runnerParameters, launchTemplateNames[i]);
-      launched = true;
-      break;
-    } catch (error) {
-      logger.debug(`Attempt '${i}' to launch instance using ${launchTemplateNames[i]} FAILED.`, LogFields.print());
-      logger.error(error, LogFields.print());
+    for (let i = currentRunners; i < minimumRunners; i++) {
+      try {
+        await createRunner(runnerParameters, launchTemplateNames[i]);
+        launched = true;
+        break;
+      } catch (error) {
+        logger.debug(`Attempt '${i}' to launch instance using ${launchTemplateNames[i]} FAILED.`, LogFields.print());
+        logger.error(error, LogFields.print());
+      }
     }
   }
   if (launched == false) {

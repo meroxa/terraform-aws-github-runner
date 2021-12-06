@@ -123,6 +123,7 @@ resource "aws_launch_template" "runner" {
     ## retain these for backwards compatibility
     environment                     = var.environment
     enable_cloudwatch_agent         = var.enable_cloudwatch_agent
+    enable_meroxa_platform          = var.enable_meroxa_platform
     ssm_key_cloudwatch_agent_config = var.enable_cloudwatch_agent ? aws_ssm_parameter.cloudwatch_agent_config_runner[0].name : ""
   })) : ""
 

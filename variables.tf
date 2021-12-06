@@ -159,6 +159,12 @@ variable "runners_maximum_count" {
   default     = 3
 }
 
+variable "runners_minimum_count" {
+  description = "The minimum number of runners that will be created."
+  type        = number
+  default     = 1
+}
+
 variable "kms_key_arn" {
   description = "Optional CMK Key ARN to be used for Parameter Store. This key must be in the current account."
   type        = string

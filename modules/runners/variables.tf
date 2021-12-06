@@ -211,6 +211,12 @@ variable "runners_maximum_count" {
   default     = 3
 }
 
+variable "runners_minimum_count" {
+  description = "The minimum number of runners that will be created."
+  type        = number
+  default     = 1
+}
+
 variable "runner_architecture" {
   description = "The platform architecture of the runner instance_type."
   type        = string
@@ -267,6 +273,12 @@ variable "runner_iam_role_managed_policy_arns" {
 
 variable "enable_cloudwatch_agent" {
   description = "Enabling the cloudwatch agent on the ec2 runner instances, the runner contains default config. Configuration can be overridden via `cloudwatch_config`."
+  type        = bool
+  default     = true
+}
+
+variable "enable_meroxa_platform" {
+  description = "Enabling the meroxa platform on the ec2 runner instances, the runner contains default config."
   type        = bool
   default     = true
 }

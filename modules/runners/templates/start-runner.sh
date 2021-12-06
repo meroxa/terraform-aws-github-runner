@@ -9,13 +9,13 @@ region=$(curl -f -H "X-aws-ec2-metadata-token: $token" -v http://169.254.169.254
 echo "Reteieved REGION from AWS API ($region)"
 
 instance_id=$(curl -f -H "X-aws-ec2-metadata-token: $token" -v http://169.254.169.254/latest/meta-data/instance-id)
-echo "Reteieved INSTANCE_ID from AWS API ($instance_id)"
+echo "Retrieved INSTANCE_ID from AWS API ($instance_id)"
 
 tags=$(aws ec2 describe-tags --region "$region" --filters "Name=resource-id,Values=$instance_id")
 echo "Retrieved tags from AWS API ($tags)"
 
 environment=$(echo "$tags" | jq -r '.Tags[]  | select(.Key == "ghr:environment") | .Value')
-echo "Reteieved ghr:environment tag - ($environment)"
+echo "Retrieved ghr:environment tag - ($environment)"
 
 parameters=$(aws ssm get-parameters-by-path --path "/$environment/runner" --region "$region" --query "Parameters[*].{Name:Name,Value:Value}")
 echo "Retrieved parameters from AWS SSM ($parameters)"
@@ -50,28 +50,22 @@ echo "Delete GH Runner token from AWS SSM"
 aws ssm delete-parameter --name "$environment"-"$instance_id" --region "$region"
 
 if [ -z "$run_as" ]; then
-    run_as="ec2-user"
+    run_as="runner"
 fi
 
 echo "Configure GH Runner as user $run_as"
-sudo -u "$run_as" -- ./config.sh --unattended --name "$instance_id" --work "_work" $${config}
+sudo -u "$run_as" -- ./config.sh --ephemeral --unattended --name "$instance_id" --work "_work" $${config}
 
 ## Start the runner
 echo "Starting runner after $(awk '{print int($1/3600)":"int(($1%3600)/60)":"int($1%60)}' /proc/uptime)"
 echo "Starting the runner as user $run_as"
 
-if [[ $agent_mode = "ephemeral" ]]; then  
-  echo "Starting the runner in ephemeral mode"
-  sudo -u "$run_as" -- ./run.sh
-  echo "Runner has finished"
-  
-  echo "Stopping cloudwatch service"
-  service awslogsd stop
-  echo "Terminating instance"
-  aws ec2 terminate-instances --instance-ids "$instance_id" --region "$region"
-else 
-  echo "Installing the runner as a service"
-  ./svc.sh install "$run_as"
-  echo "Starting the runner in persistent mode"
-  ./svc.sh start
-fi
+
+echo "Starting the runner in ephemeral mode"
+sudo -u "$run_as" -- ./run.sh
+echo "Runner has finished"
+
+echo "Stopping cloudwatch service"
+service awslogsd stop
+echo "Terminating instance"
+aws ec2 terminate-instances --instance-ids "$instance_id" --region "$region"
