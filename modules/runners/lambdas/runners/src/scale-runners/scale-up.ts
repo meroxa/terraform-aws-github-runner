@@ -134,7 +134,7 @@ export async function createRunnerLoop(runnerParameters: RunnerInputParameters, 
   let launched = false;
   for (let i = 0; i < launchTemplateNames.length; i++) {
     logger.info(`Attempt '${i}' to launch instance using ${launchTemplateNames[i]}.`, LogFields.print());
-    for (let i = currentRunners; i < minimumRunners; i++) {
+    for (let j = currentRunners; j < minimumRunners; j++) {
       try {
         await createRunner(runnerParameters, launchTemplateNames[i]);
         launched = true;
