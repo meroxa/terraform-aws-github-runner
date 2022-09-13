@@ -665,9 +665,9 @@
   version "2.4.1"
   resolved "https://registry.npmjs.org/@types/prettier/-/prettier-2.4.1.tgz"
 
-"@types/request@^2.48.4":
-  version "2.48.7"
-  resolved "https://registry.npmjs.org/@types/request/-/request-2.48.7.tgz"
+"@types/request@^2.48.8":
+  version "2.48.8"
+  resolved "https://registry.yarnpkg.com/@types/request/-/request-2.48.8.tgz#0b90fde3b655ab50976cb8c5ac00faca22f5a82c"
   dependencies:
     "@types/caseless" "*"
     "@types/node" "*"
