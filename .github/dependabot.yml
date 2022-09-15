@@ -5,13 +5,18 @@
 
 version: 2
 updates:
+
+# Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     # Workflow files stored in the
     # default location of `.github/workflows`
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: ".github:"
 
+# Maintain dependencies for Node
   - package-ecosystem: "npm"
     directory: "/modules/runner-binaries-syncer/lambdas/runner-binaries-syncer"
     schedule:
@@ -26,3 +31,11 @@ updates:
     directory: "/modules/runners/lambdas/runners"
     schedule:
       interval: "weekly"
+
+# Maintain dependencies for Terraform
+  - package-ecosystem: "terraform"
+￼   directory: "/"
+￼   schedule:
+￼     interval: "weekly"
+￼   commit-message:
+￼     prefix: "deps(terraform):"
