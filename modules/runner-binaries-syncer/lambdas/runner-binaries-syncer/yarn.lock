@@ -486,94 +486,94 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@octokit/auth-token@^2.4.4":
-  version "2.5.0"
-  resolved "https://registry.npmjs.org/@octokit/auth-token/-/auth-token-2.5.0.tgz"
+"@octokit/auth-token@^3.0.0":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@octokit/auth-token/-/auth-token-3.0.2.tgz#a0fc8de149fd15876e1ac78f6525c1c5ab48435f"
   dependencies:
-    "@octokit/types" "^6.0.3"
+    "@octokit/types" "^8.0.0"
 
-"@octokit/core@^3.5.1":
-  version "3.5.1"
-  resolved "https://registry.npmjs.org/@octokit/core/-/core-3.5.1.tgz"
+"@octokit/core@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@octokit/core/-/core-4.1.0.tgz#b6b03a478f1716de92b3f4ec4fd64d05ba5a9251"
   dependencies:
-    "@octokit/auth-token" "^2.4.4"
-    "@octokit/graphql" "^4.5.8"
-    "@octokit/request" "^5.6.0"
-    "@octokit/request-error" "^2.0.5"
-    "@octokit/types" "^6.0.3"
+    "@octokit/auth-token" "^3.0.0"
+    "@octokit/graphql" "^5.0.0"
+    "@octokit/request" "^6.0.0"
+    "@octokit/request-error" "^3.0.0"
+    "@octokit/types" "^8.0.0"
     before-after-hook "^2.2.0"
     universal-user-agent "^6.0.0"
 
-"@octokit/endpoint@^6.0.1":
-  version "6.0.12"
-  resolved "https://registry.npmjs.org/@octokit/endpoint/-/endpoint-6.0.12.tgz"
+"@octokit/endpoint@^7.0.0":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@octokit/endpoint/-/endpoint-7.0.3.tgz#0b96035673a9e3bedf8bab8f7335de424a2147ed"
   dependencies:
-    "@octokit/types" "^6.0.3"
+    "@octokit/types" "^8.0.0"
     is-plain-object "^5.0.0"
     universal-user-agent "^6.0.0"
 
-"@octokit/graphql@^4.5.8":
-  version "4.8.0"
-  resolved "https://registry.npmjs.org/@octokit/graphql/-/graphql-4.8.0.tgz"
+"@octokit/graphql@^5.0.0":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@octokit/graphql/-/graphql-5.0.3.tgz#1ff6577d356632c594f0f0db7bb5903e4e3ddb8d"
   dependencies:
-    "@octokit/request" "^5.6.0"
-    "@octokit/types" "^6.0.3"
+    "@octokit/request" "^6.0.0"
+    "@octokit/types" "^8.0.0"
     universal-user-agent "^6.0.0"
 
-"@octokit/openapi-types@^11.2.0":
-  version "11.2.0"
-  resolved "https://registry.npmjs.org/@octokit/openapi-types/-/openapi-types-11.2.0.tgz"
+"@octokit/openapi-types@^14.0.0":
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-14.0.0.tgz#949c5019028c93f189abbc2fb42f333290f7134a"
 
-"@octokit/plugin-paginate-rest@^2.16.8":
-  version "2.17.0"
-  resolved "https://registry.npmjs.org/@octokit/plugin-paginate-rest/-/plugin-paginate-rest-2.17.0.tgz"
+"@octokit/plugin-paginate-rest@^5.0.0":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-paginate-rest/-/plugin-paginate-rest-5.0.1.tgz#93d7e74f1f69d68ba554fa6b888c2a9cf1f99a83"
   dependencies:
-    "@octokit/types" "^6.34.0"
+    "@octokit/types" "^8.0.0"
 
 "@octokit/plugin-request-log@^1.0.4":
   version "1.0.4"
   resolved "https://registry.npmjs.org/@octokit/plugin-request-log/-/plugin-request-log-1.0.4.tgz"
 
-"@octokit/plugin-rest-endpoint-methods@^5.12.0":
-  version "5.13.0"
-  resolved "https://registry.npmjs.org/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-5.13.0.tgz"
+"@octokit/plugin-rest-endpoint-methods@^6.7.0":
+  version "6.7.0"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-6.7.0.tgz#2f6f17f25b6babbc8b41d2bb0a95a8839672ce7c"
   dependencies:
-    "@octokit/types" "^6.34.0"
+    "@octokit/types" "^8.0.0"
     deprecation "^2.3.1"
 
-"@octokit/request-error@^2.0.5", "@octokit/request-error@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.npmjs.org/@octokit/request-error/-/request-error-2.1.0.tgz"
+"@octokit/request-error@^3.0.0":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@octokit/request-error/-/request-error-3.0.2.tgz#f74c0f163d19463b87528efe877216c41d6deb0a"
   dependencies:
-    "@octokit/types" "^6.0.3"
+    "@octokit/types" "^8.0.0"
     deprecation "^2.0.0"
     once "^1.4.0"
 
-"@octokit/request@^5.6.0":
-  version "5.6.1"
-  resolved "https://registry.npmjs.org/@octokit/request/-/request-5.6.1.tgz"
+"@octokit/request@^6.0.0":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@octokit/request/-/request-6.2.2.tgz#a2ba5ac22bddd5dcb3f539b618faa05115c5a255"
   dependencies:
-    "@octokit/endpoint" "^6.0.1"
-    "@octokit/request-error" "^2.1.0"
-    "@octokit/types" "^6.16.1"
+    "@octokit/endpoint" "^7.0.0"
+    "@octokit/request-error" "^3.0.0"
+    "@octokit/types" "^8.0.0"
     is-plain-object "^5.0.0"
-    node-fetch "^2.6.1"
+    node-fetch "^2.6.7"
     universal-user-agent "^6.0.0"
 
-"@octokit/rest@^18.12.0":
-  version "18.12.0"
-  resolved "https://registry.npmjs.org/@octokit/rest/-/rest-18.12.0.tgz"
+"@octokit/rest@^19.0.5":
+  version "19.0.5"
+  resolved "https://registry.yarnpkg.com/@octokit/rest/-/rest-19.0.5.tgz#4dbde8ae69b27dca04b5f1d8119d282575818f6c"
   dependencies:
-    "@octokit/core" "^3.5.1"
-    "@octokit/plugin-paginate-rest" "^2.16.8"
+    "@octokit/core" "^4.1.0"
+    "@octokit/plugin-paginate-rest" "^5.0.0"
     "@octokit/plugin-request-log" "^1.0.4"
-    "@octokit/plugin-rest-endpoint-methods" "^5.12.0"
+    "@octokit/plugin-rest-endpoint-methods" "^6.7.0"
 
-"@octokit/types@^6.0.3", "@octokit/types@^6.16.1", "@octokit/types@^6.34.0":
-  version "6.34.0"
-  resolved "https://registry.npmjs.org/@octokit/types/-/types-6.34.0.tgz"
+"@octokit/types@^8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-8.0.0.tgz#93f0b865786c4153f0f6924da067fe0bb7426a9f"
   dependencies:
-    "@octokit/openapi-types" "^11.2.0"
+    "@octokit/openapi-types" "^14.0.0"
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
@@ -2547,7 +2547,7 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz"
 
-node-fetch@^2.6.1:
+node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   dependencies:
