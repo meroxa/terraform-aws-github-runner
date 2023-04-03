@@ -27,7 +27,7 @@
     "aws-sdk": "^2.1218.0",
     "body-parser": "^1.20.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-prettier": "4.2.1",
     "express": "^4.17.1",
     "jest": "^27.4.3",
     "nock": "^13.2.1",
