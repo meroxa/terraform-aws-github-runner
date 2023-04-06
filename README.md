@@ -449,7 +449,7 @@ We welcome any improvement to the standard module to make the default as secure 
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.11 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.41 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
 
