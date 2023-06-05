@@ -2945,7 +2945,7 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-source-map-support@^0.5.12, source-map-support@^0.5.21, source-map-support@^0.5.6:
+source-map-support@^0.5.12, source-map-support@^0.5.6:
   version "0.5.21"
   resolved "https://registry.npmjs.org/source-map-support/-/source-map-support-0.5.21.tgz"
   dependencies:
@@ -3189,11 +3189,9 @@ tslib@^1.8.1:
   version "1.14.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
 
-tslog@^3.3.4:
-  version "3.3.4"
-  resolved "https://registry.yarnpkg.com/tslog/-/tslog-3.3.4.tgz#083197a908c97b3b714a0576b9dac293f223f368"
-  dependencies:
-    source-map-support "^0.5.21"
+tslog@^4.8.2:
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/tslog/-/tslog-4.8.2.tgz#dbb0c96249e387e8a711ae6e077330ba1ef102c9"
 
 tsutils@^3.21.0:
   version "3.21.0"
